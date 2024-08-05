@@ -1,5 +1,13 @@
+import AddingNote from "./AddingNote";
+
+
 const Dashboard = () => {
-    return <h1>Dashboard</h1>
+    return (
+    <div>
+        <h1>all composds</h1>
+        <AddingNote />
+    </div>
+    );
 };
 
 export default Dashboard;
