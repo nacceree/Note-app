@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useUser } from "@clerk/clerk-react";
+import { useNotes } from '../../context/Notes-contexts'; // Adjust the path as needed
 import './notes.css'
 
 const AddingNote = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const { user } = useUser();
+  const { addNote } = useNotes(); // Use the addNote function li jaya mn context file
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -17,24 +20,12 @@ const AddingNote = () => {
     };
   
     try {
-      const response = await fetch('http://localhost:5173/api/note/addnote', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newNote),
-      });
-  
-      if (response.ok) {
-        // Handle successful note creation
-        setTitle("");
-        setContent("");
-      } else {
-        // Handle error
-        console.error('Failed to create note');
-      }
+      await addNote(newNote); // Use the addNote function from context
+      // Handle successful note creation
+      setTitle("");
+      setContent("");
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error adding note:', error);
     }
   };
   

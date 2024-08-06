@@ -15,15 +15,14 @@ const NoteContext = createContext(undefined);
 
 export const NoteProvider = ({ children }) => {
   const [notes, setNotes] = useState([]);
-  const { user } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
 
   const fetchNotes = async () => {
-    if (!user) return;
+    if (!isLoaded || !isSignedIn) return;
     try {
       const response = await fetch(`http://localhost:5000/api/note/${user.id}`);
       if (response.ok) {
         const fetchedNotes = await response.json();
-        console.log(fetchedNotes);
         setNotes(fetchedNotes);
       }
     } catch (err) {
@@ -33,9 +32,10 @@ export const NoteProvider = ({ children }) => {
 
   useEffect(() => {
     fetchNotes();
-  }, [user]);
+  }, [isSignedIn]);
 
   const addNote = async (note) => {
+    if (!isLoaded || !isSignedIn) return;
     try {
       const response = await fetch("http://localhost:5000/api/note/addnote", {
         method: "POST",
@@ -54,6 +54,7 @@ export const NoteProvider = ({ children }) => {
   };
 
   const updateNote = async (id, newNote) => {
+    if (!isLoaded || !isSignedIn) return;
     try {
       const response = await fetch(`http://localhost:5000/api/note/${id}`, {
         method: "PATCH",
@@ -74,6 +75,7 @@ export const NoteProvider = ({ children }) => {
   };
 
   const deleteNote = async (id) => {
+    if (!isLoaded || !isSignedIn) return;
     try {
       const response = await fetch(`http://localhost:5000/api/note/${id}`, {
         method: "DELETE",
@@ -87,7 +89,7 @@ export const NoteProvider = ({ children }) => {
   };
 
   return (
-    <NoteContext.Provider value={{ notes, addNote, updateNote, deleteNote }}>
+    <NoteContext.Provider value={{ notes, addNote, updateNote, deleteNote, fetchNotes }}>
       {children}
     </NoteContext.Provider>
   );
